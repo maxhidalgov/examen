@@ -35,7 +35,7 @@ try {
     echo 'error';
 }
 
-$_token_get = 'Bearer ipss';
+$_token_get = 'Bearer get_et_ciisa';
 $_token_post = 'Bearer ipss2024T3s70';
 $_token_patch = 'Bearer ipss2024T3s70-UP';
 $_token_disable = 'Bearer ipss2024T3s70-DOWN';

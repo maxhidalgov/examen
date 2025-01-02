@@ -17,9 +17,9 @@ class Conexion
         // $this->host = 'localhost';
         $this->host = '127.0.0.1';
         $this->port = 3306; //puerto por default de mysql
-        $this->db = 'clinicat1_ipss_backend_t3_s70';
-        $this->username = 'clinicat1_ipss_backend_t3_s70';
-        $this->password = '';
+        $this->db = 'ipss_et';
+        $this->username = 'ipss_et';
+        $this->password = 'l4cl4v3-1p55-3T';
 
         /*
         SQL: Crear la bd y la tabla
