@@ -1,7 +1,7 @@
 <?php
 
-use back\api\v1\nuestros_jugadores\JugadorControlador;
-use back\api\v1\nuestros_jugadores\JugadorModelo;
+use back\api\v1\redes_sociales\RRSSControlador;
+use back\api\v1\redes_sociales\RRSSModelos;
 
 include_once '..\version1.php';
 
@@ -10,9 +10,9 @@ switch ($_method) {
         if ($_authorization === $_token_get) {
             $lista = [];
             include_once '..\conexion.php';
-            include_once 'JugadorControlador.php';
+            include_once 'RRSSControlador.php';
 
-            $controlador = new JugadorControlador();
+            $controlador = new RRSSControlador();
             $lista = $controlador->getAll();
             http_response_code(200);
             echo json_encode(['data' => $lista]);
@@ -25,17 +25,16 @@ switch ($_method) {
         if ($_authorization === $_token_post) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'RRSSModelos.php';
+            include_once 'RRSSControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new RRSSModelos();
+            $controlador = new RRSSControlador();
             $body = json_decode(file_get_contents('php://input', true));
 
             $modelo->setNombre($body->nombre);
-            $modelo->setApellido($body->apellido);
-            $modelo->setProfesion($body->profesion);
-            $modelo->setPosicionId($body->posicion_id);
+            $modelo->setIcono($body->icono);
+            $modelo->setValor($body->valor);
             $modelo->setActivo($body->activo);
 
             $respuesta = $controlador->add($modelo);
@@ -52,32 +51,30 @@ switch ($_method) {
         if ($_authorization == $_token_put) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'RRSSModelos.php';
+            include_once 'RRSSControlador.php';
 
-            $modelo = new JugadorModelo();
+            $modelo = new RRSSModelos();
             $body = json_decode(file_get_contents('php://input', true));
 
             $modelo->setId($_parametroID);
             $modelo->setNombre($body->nombre);
-            $modelo->setApellido($body->apellido);
-            $modelo->setProfesion($body->profesion);
-            $modelo->setPosicionId($body->posicion_id);
-           // $modelo->setActivo($body->activo);
+            $modelo->setIcono($body->icono);
+            $modelo->setValor($body->valor);
+            $modelo->setActivo($body->activo);
 
-            $controlador = new JugadorControlador();
+            $controlador = new RRSSControlador();
             $lista = $controlador->getAll();
-            $registro = new JugadorModelo();
+            $registro = new RRSSModelos();
 
             $existe = 0;
             foreach ($lista as $obj) {
                 if ($obj['id'] == $_parametroID) {
                     $existe = 1;
                     $registro->setNombre($obj['nombre']);
-                    $registro->setApellido($obj['apellido']);
-                    $registro->setProfesion($obj['profesion']);
-                    $registro->setPosicionId($obj['posicion_id']);
-               //     $registro->setActivo($obj['activo']);
+                    $registro->setIcono($obj['icono']);
+                    $registro->setValor($obj['valor']);
+                    $registro->setActivo($obj['activo']);
                 }
             }
 
@@ -86,18 +83,15 @@ switch ($_method) {
             if ($registro->getNombre() != $modelo->getNombre()) {
                 $cambios++;
             }
-            if ($registro->getApellido() != $modelo->getApellido()) {
+            if ($registro->getIcono() != $modelo->getIcono()) {
                 $cambios++;
             }
-            if ($registro->getProfesion() != $modelo->getProfesion()) {
+            if ($registro->getValor() != $modelo->getValor()) {
                 $cambios++;
             }
-            if ($registro->getPosicionId() != $modelo->getPosicionId()) {
+            if ($registro->getActivo() != $modelo->getActivo()) {
                 $cambios++;
             }
-        //    if ($registro->getActivo() != $modelo->getActivo()) {
-        //        $cambios++;
-       //     }
 
             if ($cambios == 0) {
                 http_response_code(409);
@@ -128,11 +122,11 @@ switch ($_method) {
     case 'PATCH':
         if ($_authorization === $_token_patch) {
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'RRSSModelos.php';
+            include_once 'RRSSControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new RRSSModelos();
+            $controlador = new RRSSControlador();
             $lista = $controlador->getAll();
 
             $existe = 0;
@@ -176,11 +170,11 @@ switch ($_method) {
         if ($_authorization === $_token_disable) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'RRSSModelos.php';
+            include_once 'RRSSControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new RRSSModelos();
+            $controlador = new RRSSControlador();
             $lista = $controlador->getAll();
 
             $existe = 0;
@@ -223,5 +217,4 @@ switch ($_method) {
         http_response_code(501);
         echo json_encode(['error' => 'No implementado']);
         break;
-
 }

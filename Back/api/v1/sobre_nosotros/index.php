@@ -1,18 +1,17 @@
 <?php
-
-use back\api\v1\nuestros_jugadores\JugadorControlador;
-use back\api\v1\nuestros_jugadores\JugadorModelo;
-
 include_once '..\version1.php';
+
+use back\api\v1\sobre_nosotros\SobreControlador;
+use back\api\v1\sobre_nosotros\SobreModelos;
 
 switch ($_method) {
     case 'GET':
         if ($_authorization === $_token_get) {
             $lista = [];
             include_once '..\conexion.php';
-            include_once 'JugadorControlador.php';
+            include_once 'SobreControlador.php';
 
-            $controlador = new JugadorControlador();
+            $controlador = new SobreControlador();
             $lista = $controlador->getAll();
             http_response_code(200);
             echo json_encode(['data' => $lista]);
@@ -25,17 +24,15 @@ switch ($_method) {
         if ($_authorization === $_token_post) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'SobreModelos.php';
+            include_once 'SobreControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new SobreModelos();
+            $controlador = new SobreControlador();
             $body = json_decode(file_get_contents('php://input', true));
 
-            $modelo->setNombre($body->nombre);
-            $modelo->setApellido($body->apellido);
-            $modelo->setProfesion($body->profesion);
-            $modelo->setPosicionId($body->posicion_id);
+            $modelo->setLogoColor($body->logo_color);
+            $modelo->setDescripcion($body->descripcion);
             $modelo->setActivo($body->activo);
 
             $respuesta = $controlador->add($modelo);
@@ -52,52 +49,42 @@ switch ($_method) {
         if ($_authorization == $_token_put) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'SobreModelos.php';
+            include_once 'SobreControlador.php';
 
-            $modelo = new JugadorModelo();
+            $modelo = new SobreModelos();
             $body = json_decode(file_get_contents('php://input', true));
 
             $modelo->setId($_parametroID);
-            $modelo->setNombre($body->nombre);
-            $modelo->setApellido($body->apellido);
-            $modelo->setProfesion($body->profesion);
-            $modelo->setPosicionId($body->posicion_id);
-           // $modelo->setActivo($body->activo);
+            $modelo->setLogoColor($body->logo_color);
+            $modelo->setDescripcion($body->descripcion);
+            $modelo->setActivo($body->activo);
 
-            $controlador = new JugadorControlador();
+            $controlador = new SobreControlador();
             $lista = $controlador->getAll();
-            $registro = new JugadorModelo();
+            $registro = new SobreModelos();
 
             $existe = 0;
             foreach ($lista as $obj) {
                 if ($obj['id'] == $_parametroID) {
                     $existe = 1;
-                    $registro->setNombre($obj['nombre']);
-                    $registro->setApellido($obj['apellido']);
-                    $registro->setProfesion($obj['profesion']);
-                    $registro->setPosicionId($obj['posicion_id']);
-               //     $registro->setActivo($obj['activo']);
+                    $registro->setLogoColor($obj['logo_color']);
+                    $registro->setDescripcion($obj['descripcion']);
+                    $registro->setActivo($obj['activo']);
                 }
             }
 
             $cambios = 0;
 
-            if ($registro->getNombre() != $modelo->getNombre()) {
+            if ($registro->getLogoColor() != $modelo->getLogoColor()) {
                 $cambios++;
             }
-            if ($registro->getApellido() != $modelo->getApellido()) {
+            if ($registro->getDescripcion() != $modelo->getDescripcion()) {
                 $cambios++;
             }
-            if ($registro->getProfesion() != $modelo->getProfesion()) {
+            if ($registro->getActivo() != $modelo->getActivo()) {
                 $cambios++;
             }
-            if ($registro->getPosicionId() != $modelo->getPosicionId()) {
-                $cambios++;
-            }
-        //    if ($registro->getActivo() != $modelo->getActivo()) {
-        //        $cambios++;
-       //     }
 
             if ($cambios == 0) {
                 http_response_code(409);
@@ -128,11 +115,11 @@ switch ($_method) {
     case 'PATCH':
         if ($_authorization === $_token_patch) {
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'SobreModelos.php';
+            include_once 'SobreControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new SobreModelos();
+            $controlador = new SobreControlador();
             $lista = $controlador->getAll();
 
             $existe = 0;
@@ -176,11 +163,11 @@ switch ($_method) {
         if ($_authorization === $_token_disable) {
 
             include_once '..\conexion.php';
-            include_once 'JugadorModelo.php';
-            include_once 'JugadorControlador.php';
+            include_once 'SobreModelos.php';
+            include_once 'SobreControlador.php';
 
-            $modelo = new JugadorModelo();
-            $controlador = new JugadorControlador();
+            $modelo = new SobreModelos();
+            $controlador = new SobreControlador();
             $lista = $controlador->getAll();
 
             $existe = 0;
@@ -223,5 +210,4 @@ switch ($_method) {
         http_response_code(501);
         echo json_encode(['error' => 'No implementado']);
         break;
-
 }

@@ -14,17 +14,28 @@ class JugadorControlador
     public function getAll()
     {
         $con = new \conexion();
-        //$sql = "select id, nombre, apellido, profesion, posicion_id, activo from jugador;";
-
-        $sql = "SELECT jugador.id, jugador.nombre, jugador.apellido, jugador.profesion, jugador.posicion_id, jugador.activo, 
-                   jugador_posicion.nombre AS posicion_nombre, jugador_posicion.abreviado AS posicion_abreviado 
-            FROM jugador
-            INNER JOIN jugador_posicion ON jugador.posicion_id = jugador_posicion.id;";
-
+        $sql = "SELECT 
+                    jugador.id, 
+                    jugador.nombre, 
+                    jugador.apellido, 
+                    jugador.profesion, 
+                    jugador.posicion_id, 
+                    jugador.activo, 
+                    jugador_posicion.nombre AS posicion_nombre, 
+                    jugador_posicion.abreviado AS posicion_abreviado, 
+                    jugador_datosextra.calificacion AS calificacion, 
+                    jugador_datosextra.foto AS foto
+                FROM jugador
+                INNER JOIN jugador_posicion ON jugador.posicion_id = jugador_posicion.id
+                LEFT JOIN jugador_datosextra ON jugador.id = jugador_datosextra.jugador_id;";
+    
         $rs = mysqli_query($con->getConnection(), $sql);
         if ($rs) {
             while ($tupla = mysqli_fetch_assoc($rs)) {
+                // Convertir 'activo' a booleano
                 $tupla['activo'] = $tupla['activo'] == 1 ? true : false;
+    
+                // Agregar a la lista
                 array_push($this->lista, $tupla);
             }
             mysqli_free_result($rs);
