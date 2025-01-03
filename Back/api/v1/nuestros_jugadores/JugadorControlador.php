@@ -14,26 +14,48 @@ class JugadorControlador
     public function getAll()
     {
         $con = new \conexion();
-        $sql = "SELECT 
-                    jugador.id, 
-                    jugador.nombre, 
-                    jugador.apellido, 
-                    jugador.profesion, 
-                    jugador.posicion_id, 
-                    jugador.activo, 
-                    jugador_posicion.nombre AS posicion_nombre, 
-                    jugador_posicion.abreviado AS posicion_abreviado, 
-                    jugador_datosextra.calificacion AS calificacion, 
-                    jugador_datosextra.foto AS foto
-                FROM jugador
-                INNER JOIN jugador_posicion ON jugador.posicion_id = jugador_posicion.id
-                LEFT JOIN jugador_datosextra ON jugador.id = jugador_datosextra.jugador_id;";
-    
+
+        $sql = "SELECT
+                j.id AS jug_id,
+                CONCAT(j.nombre, ' ', j.apellido) AS jug_nombre_completo,
+                j.profesion AS jug_profesion,
+                jp.id AS pos_id,
+                jp.nombre AS pos_nombre,
+                jp.abreviado AS pos_abreviatura,
+                MAX(jugador_datosextra.calificacion) AS calificacion,
+                MAX(jugador_datosextra.foto) AS foto,
+                GROUP_CONCAT(
+                    JSON_OBJECT(
+                        'rrss_nombre', rs.nombre,
+                        'rrss_icono', rs.icono,
+                        'rrss_valor', jr.valor
+                    )
+                    ORDER BY rs.id SEPARATOR ', '
+                ) AS redes_sociales,
+                j.activo as jug_activo
+            FROM
+                jugador j
+            JOIN
+                jugador_posicion jp ON j.posicion_id = jp.id
+            LEFT JOIN
+                jugador_rrss jr ON j.id = jr.jugador_id
+            LEFT JOIN
+                red_social rs ON jr.red_social_id = rs.id
+            LEFT JOIN
+                jugador_datosextra ON j.id = jugador_datosextra.jugador_id
+            WHERE
+                j.activo = TRUE
+            GROUP BY
+                j.id, j.nombre, j.apellido, j.profesion, jp.id, jp.nombre, jp.abreviado;
+                    
+                            ";
+        
+     
         $rs = mysqli_query($con->getConnection(), $sql);
         if ($rs) {
             while ($tupla = mysqli_fetch_assoc($rs)) {
                 // Convertir 'activo' a booleano
-                $tupla['activo'] = $tupla['activo'] == 1 ? true : false;
+                $tupla['activo'] = $tupla['jug_activo'] == 1 ? true : false;
     
                 // Agregar a la lista
                 array_push($this->lista, $tupla);
